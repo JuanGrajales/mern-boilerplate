@@ -1,0 +1,22 @@
+{
+  "name": "mern-boilerplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "hi": "echo 'hello' ",
+    "awesome": "npm run-script hi && echo 'echo NPM is awesome!'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuanGrajales/mern-boilerplate.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JuanGrajales/mern-boilerplate/issues"
+  },
+  "homepage": "https://github.com/JuanGrajales/mern-boilerplate#readme"
+}
