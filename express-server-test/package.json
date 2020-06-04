@@ -2,7 +2,7 @@
   "name": "express-server",
   "version": "1.0.0",
   "description": "",
-  "main": "server-app.js",
+  "main": "./bin/start-script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./bin/start-script"
@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "http": "0.0.1-security",
-    "http-errors": "^1.7.3"
+    "http-errors": "^1.7.3",
+    "morgan": "^1.10.0"
   }
 }

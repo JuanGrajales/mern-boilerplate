@@ -8,7 +8,8 @@
  * Before importing (i.e. require) Express you have to install it (npm install Express).
  * Express also comes with some useful methods (see https://expressjs.com/en/api.html#express).
  */ 
-const express = require('Express'); 
+const express = require('express'); 
+
 /**
  * The app constant is the actual Express app (it is an instance of Express).
  * The app object has properties that include
@@ -23,35 +24,50 @@ const express = require('Express');
  */ 
 const app = express();   
 
+/**
+ * Path is an object that helps facilate file paths.
+ * Below you will see how we use the join method from path to establish where the static files will be located.
+ */
+const path = require('path');
 
+/**
+ * The cookieParser populates req.cookies.
+ * Cookies are a small pice of text stored on the clients computer by their browser.
+ * Common uses for cookies are authentication, storing site preferences, shopping cart items (think Amazon), etc.
+ * Each time time the client broswer interacts with the server it will pass the cookie info to the server.
+ */
+const cookieParser = require('cookie-parser');
 
+/**
+ * Dont panic :D
+ * Morgan is a HTTP request logger middleware... What?
+ * It basically logs (prints to the console) in a specified format information about the request that was made.
+ */
+const logger = require('morgan');
 
+/**
+ * Here the imported (i.e. required) path to specify the path where all static files will be located.
+ * express.static is middleware built into express.
+ * __dirname is a variable from NodeJS that tells you the absolute path of the current file. 
+ */
+app.use(express.static(path.join(__dirname, 'public')));
 
-// // testing
-// const http = require('http');
-// const server = http.createServer(app);
+/**
+ * Tell express to use the cookieParser middleware
+ */
+app.use(cookieParser())
 
-app.use('/hi',(req, res, next) => {
-  let err = new Error('wazzzza')
-  next(err); 
-  console.log('do you ever get here')
-});
+/**
+ * Here we tell express to use the morgan logger with the predefined 'dev' format.
+ */
+app.use(logger('dev'));
 
-
-// app.use((req, res, next) => {
-//   console.log('before')
-//   next(createError(404, 'what happened?')); // createError come from 'http-errors'
-//   console.log('after')
-// });
-// app.use((err, req, res, next) => {
-//   console.error('ERROR', req.method, req.path, err);
-//   if (!res.headersSent) {
-//     res.status(500).send({ msg: 'Check the error on console' });
-//   }
-// });
-
-
-
+/**
+ * These next two lines give us access to req.body, which is information sent from the client. 
+ * It is a built-in middleware. Before the body-parser package had to be used.
+ */
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 /**
  * Routing refers to determining how an application responds to a client request to a particular endpoint.
@@ -63,87 +79,46 @@ app.use('/hi',(req, res, next) => {
  * Learn more at https://expressjs.com/en/api.html#res.
  * In this example we are using the send method, which is a property of the res object.
  */
-// app.get('/', (req, res) => {  
-//   res.send(`Home route`) 
-// })
-
-
-
-
-
-
-
-
-
-// const birds = require('./routes/generic')
-
-// // ...
-
-
-// app.use('/birds', birds)
-
-
-// // Endpoint example using params
-// app.get('/params/:one/:two', (req, res) => {
-//   console.log(req.params)
-//   res.send(`Get request to /params/${req.params.one}/${req.params.two} endpoint`)
-// })
-
-// // Generic get request example
-// app.get('/', (req, res) => {
-//   res.send('Get request to / endpoint')
-// })
-
-// // Generic post request example
-// app.post('/', (req, res) => {
-//   res.send('Post request to / endpoint')
-// })
-
-// // Route with more than one callback functions
-// app.get('/multiple-callbacks', (req, res, next) => {
-//   console.log('the response will be sent by the next function ...')
-//   next()
-// }, (req, res) => {
-//   res.send('Get request to /multiple-callbacks endpoint!')
-// })
-
-// // Route with array of callback functions
-// let callback0 = (req, res, next) => {
-//   console.log('callback0')
-//   next()
-// }
-// let callback1 = (req, res, next) => {
-//   console.log('callback1')
-//   next()
-// }
-// let callback2 = (req, res) => {
-//   res.send('callback3')
-// }
-// app.get('/callback-array', [callback0, callback1, callback2])
-
-// // Route with array of callback functions and two independent functions
-// let callback00 = (req, res, next) => {
-//   console.log('callback00')
-//   next()
-// }
-// let callback11 = (req, res, next) => {
-//   console.log('callback11')
-//   next()
-// }
-// app.get('/callback-combo', [callback00, callback11], (req, res, next) => {
-//   console.log('callback33')
-//   next()
-// }, (req, res) => {
-//   res.send('callback44')
-// })
+app.get('/', (req, res) => {  
+  res.send(`Home route`);
+});
 
 /**
- * If the route is not found then this will run
+ * This route shows how to add cookies from the server.
+ * You can see the cookies from the browser by typing console.log(document.cookie) in the browser console.
+ */
+app.get('/cookie-parser-tester', (req, res) => {  
+  // Cookies that have not been signed
+  console.log('Cookies: ', req.cookies)
+  
+  // Cookies that have been signed
+  console.log('Signed Cookies: ', req.signedCookies)
+  
+  // Set key-value (name: 'express') pair to the cookie object.
+  // res.cookie('name', 'express').send('cookie set');
+
+  // Set key-value (user: 'Juan') pair to the cookie object and expire after 5000 ms (i.e. 5 seconds).
+  // res.cookie('user', 'Juan', {maxAge: 5000}).send('cookie set with maxAge option');
+
+  // Set key-value (greeting: 'Hi') pair to the cookie object and expire after 10000 ms (i.e. 10 seconds).
+  // res.cookie('greeting', 'Hi', {expire: 10000 + Date.now()}).send('cookie set with expire option');
+});
+
+/**
+ * A route that manual creates an error and then calls the next middleware that handles errors
+ */
+app.use('/error-tester',(req, res, next) => {
+  let err = new Error('Write a custom error here');
+  next(err); 
+});
+
+/**
+ * If the route is not found (i.e. 404) then this route will run. 
  */
 app.use((req, res) => {
   console.log('ERROR', req.method, req.path);
   res.status(404).json({ 
-    errorCode: res.status,
+    error: 404,
     method: req.method,
     path: req.path,
     msg: 'Route Not Found',
@@ -151,18 +126,21 @@ app.use((req, res) => {
 });
 
 /**
- * If express catches an err or if next(err) is called then this middleware will run
+ * Custome error-handling middleware. 
+ * If express catches an err or if next(err) is called then this middleware will run. 
  */
 app.use((err, req, res, next) => {
   console.log('ERROR', req.method, req.path, err);
   /**
    * This statement verifies that no other other middleware or route has sent a response to the client.
    * That way the sever doesn't sent back two responses.
-   * The value for res.headersSent will change from false to true once a response is sent (check line 52).
+   * The value for res.headersSent will change from false to true once a response is sent (check the console.logs below).
    */
   if (!res.headersSent) {
-    console.log('Value before res.send: ', res.headersSent)
+    // console.log('Value before res.send: ', res.headersSent);
     res.status(500).send({ msg: 'Check the error on console' });
-    console.log('Value after res.send: ', res.headersSent)
+    // console.log('Value after res.send: ', res.headersSent);
   }
 });
+
+module.exports = app;

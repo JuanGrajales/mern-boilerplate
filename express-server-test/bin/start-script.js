@@ -5,16 +5,19 @@
  * Import the express app and all the middleware configurations in that file
  */
 const app = require('../server-app');
+
 /**
  * The http object gives you access to helpful methods and info.
  */
 const http = require('http');
 // console.log('This is what it looks like', http)
+
 /**
  * Here we finally create the server using the http method and the express app that was configured
  */
 const server = http.createServer(app);
-console.log('This is what it looks like', server)
+// console.log('This is what it looks like', server)
+
 /**
  * While it is not necessary, I find it helpful to set the port and host as a constant.
  * Later on if you decide to change the port or host you can change the value of the constant
@@ -22,8 +25,6 @@ console.log('This is what it looks like', server)
  */
 const port = 5000
 const host = 'localhost'
-
-
 
 /**
  * The listen method is used to bind the server so that it listens for connections on the specified host and port.
