@@ -6,37 +6,32 @@
  */
 
 const app     = require('../app');
+// app is a huge object with many useful functions and other information about the app object
+// console.log(app, '-=-=-=-=-=-=-=-=-=-=')
 const debug   = require('debug')('express-server:server');
 const http    = require('http');
-const PORT    = process.env.PORT || 5000  // Use process.env.PORT variable if available if not use 5000                
-const server  = http.createServer(app);   // Create HTTP server
+const PORT    = process.env.PORT || 5000  // Use process.env.PORT variable if available if not use 5000    
+// console.log(http, '-=-=-=-=-=-=-=-=-=-=')            
+const server  = http.createServer(app);   // Create HTTP server, this is a huge object with many functions and othe
 
 
 server.listen(PORT);
 server.on('error', onError);
-server.on('listening', onListening);
-
 /**
- * Normalize a port into a number, string, or false.
+ * Event listener for HTTP server "listening" event.
  */
-function normalizePort(val) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
+server.on('listening', () => {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+  ? 'pipe ' + addr
+  : 'port ' + addr.port;
+  console.log('listening function', typeof server, addr, bind)
+  debug('Listening on ' + bind);
+});
 
 /**
  * Event listener for HTTP server "error" event.
+ * This runs when the server attempts to start
  */
 
 function onError(error) {
@@ -64,18 +59,3 @@ function onError(error) {
       throw error;
   }
 }
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-  ? 'pipe ' + addr
-  : 'port ' + addr.port;
-  console.log('listening function', addr, bind)
-  debug('Listening on ' + bind);
-}
-
-
