@@ -4,7 +4,7 @@
  */ 
 
 /**
- * The Express constant is a top-level function.
+ * The Express constant is a module. With this you can call express() (a top level function) and other methods.
  * Before importing (i.e. require) Express you have to install it (npm install Express).
  * Express also comes with some useful methods (see https://expressjs.com/en/api.html#express).
  */ 
@@ -12,7 +12,7 @@ const express = require('express');
 
 /**
  * The app constant is the actual Express app (it is an instance of Express).
- * The app object has properties that include
+ * The app object has properties that include:
  *    - Methods for routing HTTP requests
  *    - Methods for configuring middleware
  *    - Methods for rendering HTML views
@@ -44,6 +44,16 @@ const cookieParser = require('cookie-parser');
  * It basically logs (prints to the console) in a specified format information about the request that was made.
  */
 const logger = require('morgan');
+
+// Not really needed but add comments for it later
+// const createError = require('http-errors');
+// const debug = require('debug')
+
+// Missing and necessary
+// const mongoose = require('mongoose');
+// const cors = require('cors');
+// const session = require('express-session');
+// const passport = require('./config/passport');
 
 /**
  * Here the imported (i.e. required) path to specify the path where all static files will be located.

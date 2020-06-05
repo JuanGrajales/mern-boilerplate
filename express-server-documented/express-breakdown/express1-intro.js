@@ -4,14 +4,15 @@
  */ 
 
 /**
- * The Express constant is a top-level function.
+ * The Express constant is a module. With this you can call express() (a top level function) and other methods.
  * Before importing (i.e. require) Express you have to install it (npm install Express).
  * Express also comes with some useful methods (see https://expressjs.com/en/api.html#express).
  */ 
-const express = require('Express'); 
+const express = require('express'); 
+
 /**
  * The app constant is the actual Express app (it is an instance of Express).
- * The app object has properties that include
+ * The app object has properties that include:
  *    - Methods for routing HTTP requests
  *    - Methods for configuring middleware
  *    - Methods for rendering HTML views
@@ -21,7 +22,8 @@ const express = require('Express');
  * Make sure you import Express before actually calling express().
  * Learn more at https://expressjs.com/en/api.html#app.
  */ 
-const app = express();                 
+const app = express();   
+
 /**
  * While it is not necessary, I find it helpful to set the port and host as a constant.
  * Later on if you decide to change the port or host you can change the value of the constant
@@ -41,13 +43,13 @@ const host = 'localhost'
  * In this example we are using the send method, which is a property of the res object.
  */
 app.get('/', (req, res) => {  
-  res.send(`Home route`) 
-})
+  res.send(`Home route`);
+});
 
 /**
- * The listen method is used to bind the app so that it listens for connections on the specified host and port.
+ * The listen method is used to bind the server so that it listens for connections on the specified host and port.
  * In this example we use 3 parameters for listen method.
  * The second parameter (host) is optional and if you omit it the default will be "localhost"
- * The third parameter (callback) is also optional. 
+ * The third parameter (callback) is also optional; however, it's often used to let the dev know server is running correctly.
  */
 app.listen(port, host, () => console.log(`Example app listening at http://${host}:${port}`))

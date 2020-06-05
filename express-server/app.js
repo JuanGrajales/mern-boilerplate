@@ -1,70 +1,66 @@
-/**
- * express is a top-level function
- * Write what this is for
- * */ 
-const express = require('express');
-// See for yourself 
-// console.log('express is a', typeof express, '\nexpress function: \n', express)
+/******************** Modules ********************/
+const express       = require('express'); 
+const app           = express();   
+const path          = require('path');
+const cookieParser  = require('cookie-parser');
+const logger        = require('morgan');
 
-/**
- * app is the actual express app
- * Once you create the express app you have access to many helpful functions such as .use(), .get(), etc...
- * */ 
-const app = express();
-// See for yourself 
-// console.log('\napp: \n', typeof app)
-// console.log('\napp: \n', app)
-
-app.get('/', (req, res) => {
-
-})
-res.json(app)
-
-const createError = require('http-errors');
-/**
- * createError is a function
- * Write what this is used for
- * */ 
-// See for yourself 
-// console.log('createError is a', typeof createError, '\ncreateError function: \n', createError)
-
-
-
-// const path            = require('path');
-// const cookieParser    = require('cookie-parser');
-// const logger          = require('morgan');
+/******************** Middleware ********************/
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser())
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 /******************** Routes ********************/
-// const indexRouter = require('./routes/index');
-// const usersRouter = require('./routes/users');
-
-
-// // testing test final test date
-// app.use(logger('dev'));
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-// app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
-
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  console.log('before')
-  next(createError(404, 'what happened?')); // createError come from 'http-errors'
-  console.log('after')
+app.get('/', (req, res) => {  
+  res.send(`Home route`);
 });
 
-// error handler
-// app.use(function(err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.get('/cookie-parser-tester', (req, res) => {  
+  // Cookies that have not been signed
+  console.log('Cookies: ', req.cookies)
+  
+  // Cookies that have been signed
+  console.log('Signed Cookies: ', req.signedCookies)
+  
+  // Set key-value (name: 'express') pair to the cookie object.
+  // res.cookie('name', 'express').send('cookie set');
 
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
+  // Set key-value (user: 'Juan') pair to the cookie object and expire after 5000 ms (i.e. 5 seconds).
+  // res.cookie('user', 'Juan', {maxAge: 5000}).send('cookie set with maxAge option');
+
+  // Set key-value (greeting: 'Hi') pair to the cookie object and expire after 10000 ms (i.e. 10 seconds).
+  // res.cookie('greeting', 'Hi', {expire: 10000 + Date.now()}).send('cookie set with expire option');
+});
+
+app.use('/error-tester',(req, res, next) => {
+  let err = new Error('Write a custom error here');
+  next(err); 
+});
+
+app.use((req, res) => {
+  console.log('ERROR', req.method, req.path);
+  res.status(404).json({ 
+    error: 404,
+    method: req.method,
+    path: req.path,
+    msg: 'Route Not Found',
+  });
+});
+
+app.use((err, req, res, next) => {
+  console.log('ERROR', req.method, req.path, err);
+  /**
+   * This statement verifies that no other other middleware or route has sent a response to the client.
+   * That way the sever doesn't sent back two responses.
+   * The value for res.headersSent will change from false to true once a response is sent (check the console.logs below).
+   */
+  if (!res.headersSent) {
+    // console.log('Value before res.send: ', res.headersSent);
+    res.status(500).send({ msg: 'Check the error on console' });
+    // console.log('Value after res.send: ', res.headersSent);
+  }
+});
 
 module.exports = app;
