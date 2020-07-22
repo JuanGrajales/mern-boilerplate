@@ -1,29 +1,30 @@
 /******************** Modules ********************/
-const express       = require('express'); 
-const app           = express();   
-const path          = require('path');
-const cookieParser  = require('cookie-parser');
-const logger        = require('morgan');
+const express = require("express");
+const app = express();
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const { userInfo } = require("os");
 
 /******************** Middleware ********************/
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(cookieParser())
-app.use(logger('dev'));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(cookieParser());
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 /******************** Routes ********************/
-app.get('/', (req, res) => {  
+app.get("/", (req, res, next) => {
   res.send(`Home route`);
 });
 
-app.get('/cookie-parser-tester', (req, res) => {  
+app.get("/cookie-parser-tester", (req, res) => {
   // Cookies that have not been signed
-  console.log('Cookies: ', req.cookies)
-  
+  console.log("Cookies: ", req.cookies);
+
   // Cookies that have been signed
-  console.log('Signed Cookies: ', req.signedCookies)
-  
+  console.log("Signed Cookies: ", req.signedCookies);
+
   // Set key-value (name: 'express') pair to the cookie object.
   // res.cookie('name', 'express').send('cookie set');
 
@@ -34,23 +35,23 @@ app.get('/cookie-parser-tester', (req, res) => {
   // res.cookie('greeting', 'Hi', {expire: 10000 + Date.now()}).send('cookie set with expire option');
 });
 
-app.use('/error-tester',(req, res, next) => {
-  let err = new Error('Write a custom error here');
-  next(err); 
-});
+// app.use('/error-tester',(req, res, next) => {
+//   let err = new Error('Write a custom error here');
+//   next(err);
+// });
 
 app.use((req, res) => {
-  console.log('ERROR', req.method, req.path);
-  res.status(404).json({ 
+  console.log("ERROR", req.method, req.path);
+  res.status(404).json({
     error: 404,
     method: req.method,
     path: req.path,
-    msg: 'Route Not Found',
+    msg: "Route Not Found",
   });
 });
 
 app.use((err, req, res, next) => {
-  console.log('ERROR', req.method, req.path, err);
+  console.log("ERROR", req.method, req.path, err);
   /**
    * This statement verifies that no other other middleware or route has sent a response to the client.
    * That way the sever doesn't sent back two responses.
@@ -58,7 +59,7 @@ app.use((err, req, res, next) => {
    */
   if (!res.headersSent) {
     // console.log('Value before res.send: ', res.headersSent);
-    res.status(500).send({ msg: 'Check the error on console' });
+    res.status(500).send({ msg: "Server crashed" });
     // console.log('Value after res.send: ', res.headersSent);
   }
 });
