@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "hi": "echo 'hello' ",
-    "awesome": "npm run-script hi && echo 'echo NPM is awesome!'"
+    "awesome": "npm run-script hi && echo 'echo NPM is awesome!'",
+    "push": "echo --pushing to GitHub-- && git add . && git commit -m 'updated backend' && git push"
   },
   "repository": {
     "type": "git",
